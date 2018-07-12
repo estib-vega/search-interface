@@ -1,0 +1,9 @@
+.background-wrapper{
+  background: linear-gradient(302deg, #13339e, #533a6b);
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
