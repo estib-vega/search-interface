@@ -1,0 +1,25 @@
+{
+  "name": "search-interface",
+  "version": "1.0.0",
+  "description": "simple search user interface for algolia engine",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/estib-vega/search-interface.git"
+  },
+  "keywords": [
+    "algolia"
+  ],
+  "author": "J. Esteban Vega",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/estib-vega/search-interface/issues"
+  },
+  "homepage": "https://github.com/estib-vega/search-interface#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
