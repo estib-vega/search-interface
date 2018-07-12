@@ -5,7 +5,7 @@ import '../css/Animations.css'
 // page controller
 // depending if the cards are going forwards 
 // or backwards, the cards will fade or scroll accordingly
-function nextPage (data) {
+const nextPage = (data) => {
   const thispage = data.thispage
   const nextpage = data.nextpage
   
@@ -35,6 +35,7 @@ function nextPage (data) {
   }
 }
 
+// custom button component
 const PageButton = ({cl, label, data}) => (
   <button onClick={ linkEvent(data, nextPage) } className={ cl }>{label}</button>
 )
