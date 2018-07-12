@@ -1,0 +1,40 @@
+.main-container{
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 960px;
+    transition: 0.5s;
+}
+
+.faceter{
+    background-color: rgba(255, 255, 255, 0.45);
+    margin-top: 100px;
+    padding: 10px;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.faceter h4{
+    font-weight: lighter;
+    margin: 5px;
+    font-size: 12px;
+    color: white;
+}
+
+.faceter-header{
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 2px solid rgba(119, 119, 119, 0.5);
+}
+
+.facets{
+    overflow: hidden;
+}
+
+.arrow{
+    font-weight: normal;
+    font-family: Arial;
+    transform: rotate(90deg);
+    cursor: pointer;
+    transition: 0.3s;
+}
