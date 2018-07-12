@@ -4,20 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/main.css">
+    <link href="https://fonts.googleapis.com/css?family=Hind:300,400|Montserrat:300" rel="stylesheet">
+    <script src="./js/main.js"></script>
     <title>Template for UI</title>
 </head>
 <body>
     <div class="background-wrapper">
 
-        <div class="main-container">
+        <div id="data-pusher">
+            <div class="card" id="step_0">
+                <h2>1. Please enter your credentials for Algolia</h2>
+                <input type="text" name="app_id" id="app_id" placeholder="App Id">
+                <input type="text" name="api_key" id="api_key" placeholder="API Key">
+                <input type="text" name="index_name" id="index_name" placeholder="Index Name">
+                <button onclick="nextPage(0, 1)" class="next">Next</button>
+            </div>
+            <div class="card" id="step_1">
+                <h2>2. Push data to the Algolia Index</h2>
+                <p>This step is optional, if the records have been previously pushed to the index.</p>
+                <div class="input-container">
+                    <input type="file" name="input_file" id="input_file" class="inputfile" accept=".json">
+                    <label id="file_label" for="input_file" class="blue">Choose a file</label>
+                </div>
+                <div class="button-container">
+                    <button onclick="nextPage(1, 2)" class="next">Next</button>
+                    <button onclick="nextPage(1, 0)" class="back">Back</button>
+                </div>
+            </div>
+            <div class="card" id="step_2">
+                    <h2>3. Start demo</h2>
+                    <p>The setup should be done by now. Have fun searching!</p>
+                    <div class="input-container">
+                        <button onclick="nextPage(2, 1)" class="back">Back</button>
+                        <button class="blue" onclick="startSearch()">Start</button>
+                    </div>
+            </div>
+        </div>
+
+        <div id="main-container" style="pointer-events: none; opacity: 0;">
     
-            <div class="side-bar">
-                <div class="faceter fade-in-right">
+            <div class="side-bar" id="side_bar">
+                <div class="faceter">
                     <div class="faceter-header">
                         <h4>CATEGORY</h4>
-                        <h4 id="arrow">></h4>
+                        <h4 class="arrow" id="facets_0_arrow" onclick="dropDown('facets_0')" state="open">></h4>
                     </div>
-                    <div class="facets">
+                    <div class="facets" id="facets_0">
                         <h4>Category 1</h4>
                         <h4>Category 2</h4>
                         <h4>Category 3</h4>
@@ -30,10 +62,10 @@
             <div class="search-pane-wrapper">
 
                 <div class="search-bar">
-                    <input type="text" name="search_bar" id="search_bar" placeholder="Search..." class="fade-in-down">
+                    <input type="text" name="search_bar" id="search_bar" placeholder="Search...">
                 </div>
             
-                <div class="main-pane">
+                <div class="main-pane" id="main_pane">
                     <div class="single-hit fade-in-up">
                         <img src="./img/iphone.jpg" alt="example">
                         <div class="single-hit-text">
@@ -44,7 +76,7 @@
 
                         </div>
                     </div>
-                    <div class="single-hit fade-in-up">
+                    <div class="single-hit">
                         <img src="./img/iphone.jpg" alt="example">
                         <div class="single-hit-text">
 
@@ -54,7 +86,17 @@
                             
                         </div>
                     </div>
-                    <div class="single-hit fade-in-up">
+                    <div class="single-hit">
+                        <img src="./img/iphone.jpg" alt="example">
+                        <div class="single-hit-text">
+
+                            <h2>Name - Title</h2>
+                            <h3>Subtitle</h3>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum corporis nobis obcaecati facilis eaque, a voluptates magnam iure eveniet tempora deserunt sequi earum porro molestias recusandae iusto excepturi atque non!</p>
+                            
+                        </div>
+                    </div>
+                    <div class="single-hit">
                         <img src="./img/iphone.jpg" alt="example">
                         <div class="single-hit-text">
 
