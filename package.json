@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/estib-vega/search-interface#readme",
   "dependencies": {
+    "algoliasearch": "^3.29.0",
     "express": "^4.16.3"
   }
 }

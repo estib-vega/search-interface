@@ -1,39 +1,7 @@
 import { linkEvent, Component } from 'inferno';
+import { nextPage } from '../model/search_model'
 import '../css/DataPusher.css'
 import '../css/Animations.css'
-
-// page controller
-// depending if the cards are going forwards 
-// or backwards, the cards will fade or scroll accordingly
-const nextPage = (data) => {
-  const thispage = data.thispage
-  const nextpage = data.nextpage
-  
-  if(thispage < nextpage){
-      // fade out this page upwards
-      let currpage = document.getElementById("step_" + thispage)
-      currpage.classList.remove("scroll-up")        
-      currpage.classList.remove("scroll-down")        
-      currpage.classList.remove("fade-out-down")        
-      currpage.classList.add("fade-out-up")
-      // fade in next page from bottom
-      let followingpage = document.getElementById("step_" + nextpage)
-      followingpage.style.top = "-" + (nextpage * 360) + "px"
-      followingpage.classList.add("scroll-up")
-  }
-  else if(thispage > nextpage){
-      // fade out this page downwards
-      let currpage = document.getElementById("step_" + thispage)
-      currpage.classList.remove("scroll-up") 
-      currpage.classList.remove("scroll-down")  
-      currpage.classList.remove("fade-out-up")       
-      currpage.classList.add("fade-out-down")
-      // fade in next page from top
-      let followingpage = document.getElementById("step_" + nextpage)
-      followingpage.style.top = "-" + (nextpage * 360) + "px"
-      followingpage.classList.add("scroll-down")
-  }
-}
 
 // custom button component
 const PageButton = ({cl, label, data}) => (

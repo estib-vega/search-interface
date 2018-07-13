@@ -1,31 +1,26 @@
 import { linkEvent, Component } from 'inferno'
+import { handleQuery, dropDown } from '../model/search_model'
+import { initialGet } from '../model/search_model'
 import '../css/SideBar.css'
 import '../css/SearchMainPane.css'
-const testimg = require('../img/iphone.jpg')
+import '../css/Animations.css'
 
-// open or close the the facet menu
-const dropDown = (data) => {
-    const menu = data.menu
-
-    // arrow button
-    let arrow = document.getElementById(menu + "_arrow")
-    // menu items
-    let menuitems = document.getElementById(menu)
-
-
-    const state = arrow.getAttribute("state")
-
-    if(state === "open"){
-        arrow.style.transform = "rotate(-90deg)"
-        arrow.setAttribute("state", "closed");
-        menuitems.style.height = "0px"
-    }
-    else if(state === "closed"){
-        arrow.style.transform = "rotate(90deg)"
-        arrow.setAttribute("state", "open");
-        menuitems.style.height = "auto"
-    }
-}
+const testdata = [
+    {
+    "name": "iBooks",
+    "image": "https://www.boostmobile.com/content/dam/boostmobile/en/products/phones/apple/iphone-6s/space-gray/device-front.png.transform/pdpCarousel/image.jpg",
+    "link": "http://itunes.apple.com/us/app/ibooks/id364709193?mt=8",
+    "category": "Books",
+    "rank": 1
+  },
+  {
+    "name": "Kindle – Read Books, Magazines &amp; More – Over 1 Million eBooks &amp; Newspapers",
+    "image": "http://a4.mzstatic.com/us/r1000/080/Purple/v4/3f/6d/63/3f6d63e0-368d-c79d-c796-961db576d054/mza_1466682376824365277.175x175-75.jpg",
+    "link": "http://itunes.apple.com/us/app/kindle-read-books-magazines/id302584613?mt=8",
+    "category": "Books",
+    "rank": 2
+  },
+]
 
 // test facet
 const Facet = () => {
@@ -56,50 +51,65 @@ const SideBar = () => {
 }
 
 // search bar 
-const SearchBar = () => {
+const SearchBar = ({onTextChange}) => {
     return (
         <div className="search-bar">
-            <input type="text" name="search_bar" id="search_bar" placeholder="Search..."/>
+            <input type="text" name="search_bar" id="search_bar" placeholder="Search..." onKeyUp={ event => { onTextChange(event.target.value)} } autoFocus autoComplete="off"/>
         </div>
     )
 }
 
 // test hit
-const SingleHit = () => {
+const SingleHit = ({data}) => {
     return (
         <div className="single-hit">
-            <img src={ testimg } alt="example"/>
+            <img src={ data.image } alt="example"/>
             <div className="single-hit-text">
-                <h2>Name - Title</h2>
-                <h3>Subtitle</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. 
-                    Harum corporis nobis obcaecati facilis eaque, a voluptates 
-                    magnam iure eveniet tempora deserunt sequi earum porro molestias 
-                    recusandae iusto excepturi atque non!</p>
+                <a href={ data.link }><h2>{ data.name }</h2></a>
+                <h3>{ data.category }</h3>
             </div>
         </div>
     )
 }
 
 // main results pane
-const MainPane = () => {
-    return (
-        <div className="main-pane">
-            <SingleHit/>
-            <SingleHit/>
-            <SingleHit/>
-            <SingleHit/>
-        </div>
-    )
+class MainPane extends Component {
+    render (){
+        return (
+            <div className="main-pane">
+                {
+                    this.props.hits.map((hit) => {
+                        return <SingleHit data={hit}/>
+                    })
+                }
+            </div>
+        )
+    }
 }
 
 // search bar and main results pane 
 class SearchMainPane extends Component {
+    constructor(){
+        super();
+        this.state = {
+            hits: []
+        }
+    }
+
+    componentDidMount(){
+        initialGet().then((result) => {
+            this.setState({
+                hits: result.hits
+            })
+        })
+    }
     render () {
         return (
             <div className="search-pane-wrapper">
-                <SearchBar/>
-                <MainPane/>
+                <SearchBar onTextChange={ () => {
+                    handleQuery('search_bar').then(result => this.setState({ hits: result.hits }))
+                } }/>
+                <MainPane hits={this.state.hits}/>
             </div>
         )
     }
