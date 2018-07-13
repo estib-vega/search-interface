@@ -11,7 +11,7 @@ function getFromQry (qry) {
         // console.log(json);
         return json
     }).catch(error => {
-        console.log(error)
+        // console.log(error)
         return []
     })
 

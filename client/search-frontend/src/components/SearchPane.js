@@ -4,18 +4,19 @@ import { initialGet } from '../model/search_model'
 import '../css/SideBar.css'
 import '../css/SearchMainPane.css'
 import '../css/Animations.css'
+import '../css/StatusBar.css'
 
 const testdata = [
     {
     "name": "iBooks",
-    "image": "https://www.boostmobile.com/content/dam/boostmobile/en/products/phones/apple/iphone-6s/space-gray/device-front.png.transform/pdpCarousel/image.jpg",
+    "image": "https://i.pinimg.com/736x/f4/3e/63/f43e630bbce1710655b30fdac7c3c9a4--philadelphia-reflection-photography.jpg",
     "link": "http://itunes.apple.com/us/app/ibooks/id364709193?mt=8",
     "category": "Books",
     "rank": 1
   },
   {
     "name": "Kindle – Read Books, Magazines &amp; More – Over 1 Million eBooks &amp; Newspapers",
-    "image": "http://a4.mzstatic.com/us/r1000/080/Purple/v4/3f/6d/63/3f6d63e0-368d-c79d-c796-961db576d054/mza_1466682376824365277.175x175-75.jpg",
+    "image": "https://i.pinimg.com/736x/f4/3e/63/f43e630bbce1710655b30fdac7c3c9a4--philadelphia-reflection-photography.jpg",
     "link": "http://itunes.apple.com/us/app/kindle-read-books-magazines/id302584613?mt=8",
     "category": "Books",
     "rank": 2
@@ -87,6 +88,33 @@ class MainPane extends Component {
     }
 }
 
+// ascending descending switch
+const Switch = () => {
+    return (
+        <div className="complete-switch">
+            <h3>ASC</h3>
+            <label class="switch">
+            <input type="checkbox"/>
+            <span class="slider round"></span>
+            </label>
+            <h3>DESC</h3>
+        </div>
+    )
+}
+
+// status bar
+const StatusBar = () => {
+    return (
+        <div className="status-bar">
+            <div className="status-button-container">
+                <button>-</button>
+                <button>+</button>
+            </div>
+            <Switch/>
+        </div>
+    )
+}
+
 // search bar and main results pane 
 class SearchMainPane extends Component {
     constructor(){
@@ -97,18 +125,36 @@ class SearchMainPane extends Component {
     }
 
     componentDidMount(){
-        initialGet().then((result) => {
+        initialGet()
+        .then((result) => {
             this.setState({
                 hits: result.hits
             })
         })
+        .catch(() => {
+            this.setState({
+                hits: testdata
+            })
+        })
     }
+
     render () {
         return (
             <div className="search-pane-wrapper">
                 <SearchBar onTextChange={ () => {
-                    handleQuery('search_bar').then(result => this.setState({ hits: result.hits }))
+                    handleQuery('search_bar')
+                    .then(result => {
+                        if(result){
+                            this.setState({ hits: result.hits})
+                        }
+                    })
+                    .catch(() => {
+                        this.setState({
+                            hits: testdata
+                        })
+                    })
                 } }/>
+                <StatusBar/>
                 <MainPane hits={this.state.hits}/>
             </div>
         )

@@ -37,7 +37,7 @@
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
     border-radius: 3px;
     margin: 0 10px;
-    height: calc(100% - 110px);
+    height: calc(100% - 170px);
     overflow-y: scroll;
 }
 
