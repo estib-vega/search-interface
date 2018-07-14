@@ -1,6 +1,5 @@
 import { linkEvent, Component } from 'inferno'
-import { handleQuery, dropDown } from '../model/search_model'
-import { initialGet } from '../model/search_model'
+import { handleQuery, dropDown, initialGet, getFacets } from '../model/search_model'
 import '../css/SideBar.css'
 import '../css/SearchMainPane.css'
 import '../css/Animations.css'
@@ -23,30 +22,63 @@ const testdata = [
   },
 ]
 
-// test facet
-const Facet = () => {
-    return ( 
-        <div className="faceter">
+// single category
+const SingleCategory = ({value, count}) => {
+    return (
+        <div className="single-category">
+            <h4>{value}</h4>
+            <h4>{count}</h4>
+        </div>
+    )
+}
+
+// category facets
+class Categories extends Component {
+    constructor(){
+        super()
+        this.state = {
+            facets: []
+        }
+    }
+
+    componentDidMount(){
+        // get the counts
+        getFacets()
+        .then((json) => {
+            this.setState({
+                facets: json.facet
+            })
+        })
+        .catch(() => {
+            console.warn('- Unable to retrieve facets');
+        })
+    }
+
+    render(){
+        return (
+            <div className="faceter">
             <div className="faceter-header">
                 <h4>CATEGORY</h4>
                 <h4 className="arrow" id="facets_0_arrow" onClick={ linkEvent({menu: 'facets_0'}, dropDown) } state="open">></h4>
             </div>
             <div className="facets" id="facets_0">
-                <h4>Category 1</h4>
-                <h4>Category 2</h4>
-                <h4>Category 3</h4>
-                <h4>Category 4</h4>
-                <h4>Category 5</h4>
+                {
+                    this.state.facets.map((facet) => {
+                        return <SingleCategory value={facet.value} count={facet.count}/>
+                    })
+                }
             </div>
         </div>
-    )
+        )
+    }
 }
 
 // side bar
 const SideBar = () => {
     return (
         <div className="side-bar" id="side_bar">
-            <Facet/>
+            {/* <Facet/> */}
+            <Categories/>
         </div>
     )
 }
@@ -55,7 +87,7 @@ const SideBar = () => {
 const SearchBar = ({onTextChange}) => {
     return (
         <div className="search-bar">
-            <input type="text" name="search_bar" id="search_bar" placeholder="Search..." onKeyUp={ event => { onTextChange(event.target.value)} } autoFocus autoComplete="off"/>
+            <input type="text" name="search_bar" id="search_bar" placeholder="Search..." onKeyUp={ event => {onTextChange(event.target.value)} } autoComplete="off"/>
         </div>
     )
 }
@@ -66,7 +98,7 @@ const SingleHit = ({data}) => {
         <div className="single-hit">
             <img src={ data.image } alt="example"/>
             <div className="single-hit-text">
-                <a href={ data.link }><h2>{ data.name }</h2></a>
+                <a href={ data.link }><h2 dangerouslySetInnerHTML={{__html: data._highlightResult ? data._highlightResult.name.value : data.name}}></h2></a>
                 <h3>{ data.category }</h3>
             </div>
         </div>
@@ -77,7 +109,7 @@ const SingleHit = ({data}) => {
 class MainPane extends Component {
     render (){
         return (
-            <div className="main-pane">
+            <div className="main-pane" id="main_pane">
                 {
                     this.props.hits.map((hit) => {
                         return <SingleHit data={hit}/>
@@ -105,7 +137,7 @@ const Switch = () => {
 // status bar
 const StatusBar = () => {
     return (
-        <div className="status-bar">
+        <div className="status-bar" id="status_bar">
             <div className="status-button-container">
                 <button>-</button>
                 <button>+</button>
@@ -141,8 +173,9 @@ class SearchMainPane extends Component {
     render () {
         return (
             <div className="search-pane-wrapper">
-                <SearchBar onTextChange={ () => {
-                    handleQuery('search_bar')
+                <SearchBar onTextChange={ (qry) => {
+                    
+                    handleQuery(qry)
                     .then(result => {
                         if(result){
                             this.setState({ hits: result.hits})
@@ -164,7 +197,7 @@ class SearchMainPane extends Component {
 class SearchPane extends Component {
     render () {
         return (
-            <div className="main-container">
+            <div className="main-container" id="main_container">
                 <SideBar/>
                 <SearchMainPane/>
             </div>

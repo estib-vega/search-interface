@@ -39,6 +39,7 @@
     padding: 10px;
     font-size: 14px;
     font-weight: lighter;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .card button{
@@ -54,11 +55,28 @@
     transition: 0.25s;
     margin: 5px 10px;
     float: right;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
 }
 
 .card p{
     font-family: 'Hind', sans-serif;
     text-align: center;
+}
+
+.card h5{
+    text-align: center;
+    font-weight: lighter;
+    font-family: 'Montserrat', sans-serif;
+    opacity: 0.75;
+    position: absolute;
+    top: -10px;
+    right: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.card h5:hover{
+    opacity: 1;
 }
 
 .next{
@@ -99,6 +117,5 @@
     padding: 12px 25px;
     border-radius: 24px;
     cursor: pointer;
-    /* margin-top: 100px;
-    margin-bottom: 60px; */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }

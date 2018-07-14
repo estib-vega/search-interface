@@ -5,12 +5,11 @@ function getFromQry (qry) {
     const url = "/api/query/" + qry
     
     const response = fetch(url)
-    .then(response => {
-        return response.json()
-    }).then(json => {
-        // console.log(json);
-        return json
-    }).catch(error => {
+    .then(response => 
+        response.json()
+    ).then(json => 
+        json
+    ).catch(error => {
         // console.log(error)
         return []
     })
@@ -24,9 +23,16 @@ export function initialGet () {
 
 
 // handle the search queries
-export function handleQuery (id) {
-    const qry = document.getElementById(id).value
+export function handleQuery (qry) {
     return getFromQry(qry)
+}
+
+// get the face info
+export const getFacets = () => {
+    const facetUrl = "/api/facet"
+
+    return fetch(facetUrl)
+    .then((response) => response.json())
 }
 
 // open or close the the facet menu
@@ -84,4 +90,39 @@ export function nextPage (data) {
         followingpage.style.top = "-" + (nextpage * 360) + "px"
         followingpage.classList.add("scroll-down")
     }
+  }
+
+// fade out data pusher 
+// fade in search components
+export function startSearch () {
+    // hide the pusher
+    let pusher = document.getElementById('data_pusher')
+    pusher.style.opacity  = "0";
+    pusher.style.pointerEvents = "none";
+  
+    let search = document.getElementById("main_container")
+    search.style.opacity  = "1";
+    search.style.pointerEvents = "all";
+  
+    // focus search bar
+    let searchbar = document.getElementById("search_bar")
+    searchbar.focus()
+    // fade in
+    searchbar.style.opacity = "0";
+    searchbar.classList.add("fade-in-down")
+  
+    // fade in side bar
+    let sidebar = document.getElementById("side_bar")
+    sidebar.style.opacity = "0";
+    sidebar.classList.add("fade-in-right")
+  
+    // fade in main pane
+    let main = document.getElementById("main_pane")
+    main.style.opacity = "0";
+    main.classList.add("fade-in-up")
+  
+    // fade in status bar
+    let status = document.getElementById("status_bar")
+    status.style.opacity = "0";
+    status.classList.add("fade-in-left")
   }
