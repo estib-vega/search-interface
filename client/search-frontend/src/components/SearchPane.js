@@ -1,107 +1,47 @@
-import { linkEvent, Component } from 'inferno'
-import { handleQuery, dropDown, initialGet, getFacets } from '../model/search_model'
+import { Component } from 'inferno'
+import { handleQuery } from '../model/search_model'
+import SideBar from './search/SideBar'
+import StatusBar from './search/StatusBar'
 import '../css/SideBar.css'
 import '../css/SearchMainPane.css'
 import '../css/Animations.css'
 import '../css/StatusBar.css'
+const gitImg = require('../img/git.png')
+const notfound = require('../img/error.jpg')
 
 const testdata = [
     {
-    "name": "iBooks",
+    "name": "No results",
     "image": "https://i.pinimg.com/736x/f4/3e/63/f43e630bbce1710655b30fdac7c3c9a4--philadelphia-reflection-photography.jpg",
-    "link": "http://itunes.apple.com/us/app/ibooks/id364709193?mt=8",
-    "category": "Books",
+    "link": "/",
+    "category": "404",
     "rank": 1
-  },
-  {
-    "name": "Kindle – Read Books, Magazines &amp; More – Over 1 Million eBooks &amp; Newspapers",
-    "image": "https://i.pinimg.com/736x/f4/3e/63/f43e630bbce1710655b30fdac7c3c9a4--philadelphia-reflection-photography.jpg",
-    "link": "http://itunes.apple.com/us/app/kindle-read-books-magazines/id302584613?mt=8",
-    "category": "Books",
-    "rank": 2
-  },
+  }
 ]
-
-// single category
-const SingleCategory = ({value, count}) => {
-    return (
-        <div className="single-category">
-            <h4>{value}</h4>
-            <h4>{count}</h4>
-        </div>
-    )
-}
-
-// category facets
-class Categories extends Component {
-    constructor(){
-        super()
-        this.state = {
-            facets: []
-        }
-    }
-
-    componentDidMount(){
-        // get the counts
-        getFacets()
-        .then((json) => {
-            this.setState({
-                facets: json.facet
-            })
-        })
-        .catch(() => {
-            console.warn('- Unable to retrieve facets');
-        })
-    }
-
-    render(){
-        return (
-            <div className="faceter">
-            <div className="faceter-header">
-                <h4>CATEGORY</h4>
-                <h4 className="arrow" id="facets_0_arrow" onClick={ linkEvent({menu: 'facets_0'}, dropDown) } state="open">></h4>
-            </div>
-            <div className="facets" id="facets_0">
-                {
-                    this.state.facets.map((facet) => {
-                        return <SingleCategory value={facet.value} count={facet.count}/>
-                    })
-                }
-            </div>
-        </div>
-        )
-    }
-}
-
-// side bar
-const SideBar = () => {
-    return (
-        <div className="side-bar" id="side_bar">
-            {/* <Facet/> */}
-            <Categories/>
-        </div>
-    )
-}
 
 // search bar 
 const SearchBar = ({onTextChange}) => {
     return (
         <div className="search-bar">
-            <input type="text" name="search_bar" id="search_bar" placeholder="Search..." onKeyUp={ event => {onTextChange(event.target.value)} } autoComplete="off"/>
+            <input className="fade-in-down" type="text" name="search_bar" id="search_bar" placeholder="Search..." onKeyUp={ event => {onTextChange(event.target.value)} } autofocus autoComplete="off"/>
         </div>
     )
 }
 
+
+
 // test hit
 const SingleHit = ({data}) => {
     return (
-        <div className="single-hit">
-            <img src={ data.image } alt="example"/>
-            <div className="single-hit-text">
-                <a href={ data.link }><h2 dangerouslySetInnerHTML={{__html: data._highlightResult ? data._highlightResult.name.value : data.name}}></h2></a>
-                <h3>{ data.category }</h3>
+        <a href={ data.link } className="single-link">
+            <div className="single-hit">
+                <img src={ data.image || data.image === "" ? notfound : data.image } alt="img"/>
+                <div className="single-hit-text">
+                    <h2 dangerouslySetInnerHTML={{__html: data._highlightResult ? data._highlightResult.name.value : data.name}}></h2>
+                    <h3>{ data.category }</h3>
+                </div>
             </div>
-        </div>
+        </a>
     )
 }
 
@@ -109,10 +49,10 @@ const SingleHit = ({data}) => {
 class MainPane extends Component {
     render (){
         return (
-            <div className="main-pane" id="main_pane">
+            <div className="main-pane fade-in-up" id="main_pane" style={ this.props.op }>
                 {
                     this.props.hits.map((hit) => {
-                        return <SingleHit data={hit}/>
+                        return <SingleHit data={ hit }/>
                     })
                 }
             </div>
@@ -120,89 +60,181 @@ class MainPane extends Component {
     }
 }
 
-// ascending descending switch
-const Switch = () => {
-    return (
-        <div className="complete-switch">
-            <h3>ASC</h3>
-            <label class="switch">
-            <input type="checkbox"/>
-            <span class="slider round"></span>
-            </label>
-            <h3>DESC</h3>
-        </div>
-    )
-}
 
-// status bar
-const StatusBar = () => {
-    return (
-        <div className="status-bar" id="status_bar">
-            <div className="status-button-container">
-                <button>-</button>
-                <button>+</button>
-            </div>
-            <Switch/>
-        </div>
-    )
-}
+
 
 // search bar and main results pane 
 class SearchMainPane extends Component {
-    constructor(){
-        super();
-        this.state = {
-            hits: []
-        }
-    }
+    // constructor(){
+    //     super();
+    //     this.state = {
+    //         hits: [],
+    //         imageDict: {},
+    //         lastQry: "",
+    //         pages: 0,
+    //         currPage: 0,
+    //         numHits: 0,
+    //         main_pane_style: ""
+    //     }
 
-    componentDidMount(){
-        initialGet()
-        .then((result) => {
-            this.setState({
-                hits: result.hits
-            })
-        })
-        .catch(() => {
-            this.setState({
-                hits: testdata
-            })
-        })
-    }
+    //     this.updateHits = this.updateHits.bind(this)
+    //     this.switchRanking = this.switchRanking.bind(this)
+    // }
+
+    // switchRanking(asc){
+    //     let qry = this.state.lastQry
+    //     let page = this.state.currPage
+    //     if(asc){
+    //         // console.log('ascending');
+    //         this.updateHits(qry, page, "+")
+    //     } else {
+    //         // console.log('descending');
+    //         this.updateHits(qry, page)
+
+    //     }
+    // }
+
+    // updateHits(qry, page, rank){
+    //     // remember last query for pagination
+    //     this.setState({
+    //         lastQry: qry,
+    //         currPage: page ? page : 0,
+    //         main_pane_style: "pointer-events: none; filter: blur(1.5px);"
+    //     })
+
+    //     handleQuery(qry, page, rank)
+    //     .then(result => {
+    //         console.log(result.facet);
+            
+    //         if(result){
+    //             this.setState({ 
+    //                 hits: result.hits,
+    //                 pages: result.pages,
+    //                 numHits: result.results,
+    //                 main_pane_style: "pointer-events: all; filter: none;"
+    //             })
+    //         }
+    //     })
+    //     .catch(() => {
+    //         this.setState({
+    //             hits: testdata,
+    //             pages: 1,
+    //             numHits: 0,
+    //             main_pane_style: "pointer-events: all; filter: none;"
+    //         })
+    //     })
+    // }
 
     render () {
         return (
             <div className="search-pane-wrapper">
-                <SearchBar onTextChange={ (qry) => {
-                    
-                    handleQuery(qry)
-                    .then(result => {
-                        if(result){
-                            this.setState({ hits: result.hits})
-                        }
-                    })
-                    .catch(() => {
-                        this.setState({
-                            hits: testdata
-                        })
-                    })
-                } }/>
-                <StatusBar/>
-                <MainPane hits={this.state.hits}/>
+                <SearchBar onTextChange={ (qry) => { this.props.updateHits(qry) } }/>
+                <StatusBar 
+                    switchRanking={this.props.switchRanking}
+                    numHits={this.props.numHits} 
+                    currPage={ this.props.currPage } 
+                    pages={ this.props.pages } 
+                    onPagination={ (page) => { this.props.updateHits(this.props.lastQry, page) } }
+                />
+                <MainPane hits={this.props.hits} op={ this.props.main_pane_style }/>
             </div>
         )
     }
 }
 
+// footer
+const Footer = () => {
+    return (
+        <div className="footer">
+            <p>Coded by J. Esteban Vega</p>
+            <a href="https://github.com/estib-vega/search-interface">
+                <img src={ gitImg } alt="git"/>
+            </a>
+        </div>
+    )
+}
+
 class SearchPane extends Component {
+    constructor(){
+        super();
+        this.state = {
+            hits: [],
+            facet: [],
+            imageDict: {},
+            lastQry: "",
+            pages: 0,
+            currPage: 0,
+            numHits: 0,
+            main_pane_style: ""
+        }
+
+        this.updateHits = this.updateHits.bind(this)
+        this.switchRanking = this.switchRanking.bind(this)
+    }
+
+    switchRanking(asc){
+        let qry = this.state.lastQry
+        let page = this.state.currPage
+        if(asc){
+            // console.log('ascending');
+            this.updateHits(qry, page, "+")
+        } else {
+            // console.log('descending');
+            this.updateHits(qry, page)
+
+        }
+    }
+
+    updateHits(qry, page, rank){
+        // remember last query for pagination
+        this.setState({
+            lastQry: qry,
+            currPage: page ? page : 0,
+            main_pane_style: "pointer-events: none; filter: blur(1.5px);"
+        })
+
+        handleQuery(qry, page, rank)
+        .then(result => {
+            if(result){
+                this.setState({ 
+                    hits: result.hits,
+                    facet: result.facet,
+                    pages: result.pages,
+                    numHits: result.results,
+                    main_pane_style: "pointer-events: all; filter: none;"
+                })
+            }
+        })
+        .catch(() => {
+            this.setState({
+                hits: testdata,
+                facet: [],
+                pages: 1,
+                numHits: 0,
+                main_pane_style: "pointer-events: all; filter: none;"
+            })
+        })
+    }
+
     render () {
         return (
             <div className="main-container" id="main_container">
-                <SideBar/>
-                <SearchMainPane/>
+                <SideBar facets={this.state.facet}/>
+                <SearchMainPane
+                    hits={this.state.hits}
+                    imageDict={this.state.imageDict}
+                    lastQry={this.state.lastQry}
+                    pages={this.state.pages}
+                    currPage={this.state.currPage}
+                    numHits={this.state.numHits}
+                    main_pane_style={this.state.main_pane_style}
+                    updateHits={this.updateHits}
+                    switchRanking={this.switchRanking}
+                />
+                <Footer/>
             </div>
         );
     }
 }
 
-export default SearchPane
+export default SearchPane;

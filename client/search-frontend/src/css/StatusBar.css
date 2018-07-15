@@ -6,6 +6,7 @@
     border-radius: 3px;
     display: flex;
     justify-content: space-evenly;
+    opacity: 0;
 }
 
 .status-button-container{
@@ -23,6 +24,11 @@
     width: 25px;
     color: #777;
     cursor: pointer;
+}
+
+.status-button-container h3{
+    color: white;
+    opacity: 0.5;
 }
 
 .complete-switch{
@@ -92,4 +98,15 @@ input:checked + .slider:before {
 
 .slider.round:before {
     border-radius: 50%;
+}
+
+.total-hits-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.total-hits-container h3{
+    font-size: 14px;
+    opacity: .55;
 }

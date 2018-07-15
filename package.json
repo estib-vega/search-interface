@@ -4,7 +4,10 @@
   "description": "simple search user interface for algolia engine",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "client": "cd client/search-frontend && npm start",
+    "server": "nodemon index.js",
+    "dev": "concurrently --kill-others-on-fail \"npm:server\" \"npm:client\""
   },
   "repository": {
     "type": "git",
@@ -21,6 +24,7 @@
   "homepage": "https://github.com/estib-vega/search-interface#readme",
   "dependencies": {
     "algoliasearch": "^3.29.0",
+    "algoliasearch-helper": "^2.26.1",
     "express": "^4.16.3"
   }
 }

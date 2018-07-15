@@ -1,59 +1,71 @@
 const express = require('express')
 const app = express()
 const algoliasearch = require('algoliasearch');
+const algoliasearchHelper = require('algoliasearch-helper');
+
+
 
 // algolia credentials
-const client = algoliasearch('3ACEVDOML5', 'aab86189caae9cb23fd8db8cf7f9667a');
-const index = client.initIndex('App_Store');
-index.setSettings({
-    attributesForFaceting : ['searchable(category)'],
-    maxValuesPerFacet: 1000,
-    searchableAttributes: [
-        'name',
-      ]
-})
+const APP_ID = '3ACEVDOML5'
+const API_KEY = 'aab86189caae9cb23fd8db8cf7f9667a'
+const INDEX_NAME = 'App_Store'
+
+
+const client = algoliasearch(APP_ID, API_KEY);
+const helper = algoliasearchHelper(client, INDEX_NAME, {
+    facets: ['category']
+});
 
 // serve built inferno files
 app.use(express.static('./client/search-frontend/build'))
-// app.use(express.static('./public'))
 
 // get from algolia api
-app.get("/api/query/:qry", (req, res) => {
-    var qry = req.params.qry
+app.get("/api/query/:qry&:page&:rank", (req, res) => {
+    let qry = req.params.qry === "-" ? "" : req.params.qry
+    let page = req.params.page === "-" ? "" : req.params.page
+    let rank = req.params.rank === "-" ? "desc(rank)" : "asc(rank)"
 
-    if(qry === "-"){
-        qry = ""
-    }
+    // console.log(rank);
 
-    index.search({
-        query: qry,
-        hitsPerPage: 4
+    // order descending or ascending
+    const index = client.initIndex(INDEX_NAME)
+
+    index.setSettings({
+        customRanking: [
+            rank
+        ]
+    }, () =>{
+        setTimeout(() => {
+            index.getSettings().then( result => {
+                console.log(result.customRanking, rank);
+                
+            })
+           
+        }, 1000)
         
-    },
-    (err, content) => {
-        if(err){
-            console.log(err);
-        }
-        
-        res.json({hits: content.hits})
-    })
+        helper.setQuery(qry).search()
     
+        helper.searchOnce({hitsPerPage: 10, page: page})
+        .then((response) => {
+            res.json({hits: response.content.hits, pages: response.content.nbPages, results: response.content.nbHits, facet: response.content.getFacetValues('category')})
+        })
+        .catch(er => console.log(er))
+    })
+
+   
 })
 
 // get the values of the different facets
 app.get("/api/facet", (req, res) => {
-    index.searchForFacetValues({
-        facetName: 'category',
-        facetQuery: ""
-    }, (err, content) => {
-        if (err){
-            console.log(err);
-            
-        }
 
-        res.json({facet: content.facetHits})
+    helper.searchOnce()
+    .then((response) => {
+        res.json({facet: response.content.getFacetValues('category')})
     })
+    .catch(er => console.log(er))
+
 })
+
 
 app.listen(8080, () => {
     console.log('listening in port 8080');
