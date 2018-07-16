@@ -28,7 +28,14 @@ class AlgoliaModel {
 
     // add app to the index
     addObject(obj, callback){
-        this.index.addObject(obj, (err, content) => {
+        const data = {
+            name: obj.name,
+            image: obj.image,
+            link: obj.link,
+            category: obj.category,
+            rank: obj.rank
+        }
+        this.index.addObject(data, (err, content) => {
             if(err){
                 console.log(err);
                 return
