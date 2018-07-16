@@ -8,7 +8,7 @@ const Switch = ({ switchRanking }) => {
         <div className="complete-switch">
             <h3>DESC</h3>
             <label class="switch">
-            <input type="checkbox" onChange={ e => { switchRanking(e.target.checked)} }/>
+            <input type="checkbox" onChange={ e => { switchRanking(e.target.checked, true)} }/>
             <span class="slider round"></span>
             </label>
             <h3>ASC</h3>

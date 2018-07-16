@@ -1,5 +1,4 @@
 import { linkEvent, Component } from 'inferno'
-import { dropDown } from '../../model/APIModel'
 import '../../css/SideBar.css'
 
 class SingleCategory extends Component {
@@ -26,7 +25,11 @@ class SingleCategory extends Component {
 class Categories extends Component {
     constructor(props){
         super(props)
+        this.state = {
+            arrowState: true // open
+        }
         this.selectCategory = this.selectCategory.bind(this)
+        this.dropDown = this.dropDown.bind(this)
     }
 
     selectCategory(category) {
@@ -41,26 +44,35 @@ class Categories extends Component {
         this.props.onChangedCategory(newSelectedState, val)
     }
 
+    dropDown(){
+        const next = !this.state.arrowState
+        this.setState({arrowState: next})
+    }
+
   
 
     render(){
         return (
-            <div className="faceter">
-            <div className="faceter-header">
-                <h4>CATEGORY</h4>
-                <h4 className="arrow" id="facets_0_arrow" onClick={ linkEvent({menu: 'facets_0'}, dropDown) } state="open">></h4>
-            </div>
-            <div className="facets" id="facets_0">
-                {
-                    this.props.hardFacets.map((facet) => {
-                        const facetObj = this.props.facets.filter(val => val.name === facet.name)
-                        const count = facetObj && facetObj.length === 1 ? facetObj[0].count : 0
+            <div className="faceter" style={this.state.arrowState ? "" : "height: 0px;"}>
+                <div className="faceter-header">
+                    <h4>CATEGORY</h4>
+                    <h4 
+                        className="arrow"
+                        style={this.state.arrowState ? "": "transform: rotate(-90deg);"}
+                        onClick={ this.dropDown }
+                    >></h4>
+                </div>
+                <div className="facets" style={this.state.arrowState ? "" : "height: 0px;"}>
+                    {
+                        this.props.hardFacets.map((facet) => {
+                            const facetObj = this.props.facets.filter(val => val.name === facet.name)
+                            const count = facetObj && facetObj.length === 1 ? facetObj[0].count : 0
 
-                        return <SingleCategory value={facet.name} count={count} onSelect={this.selectCategory}/>
-                    })
-                }
+                            return <SingleCategory value={facet.name} count={count} onSelect={this.selectCategory}/>
+                        })
+                    }
+                </div>
             </div>
-        </div>
         )
     }
 }

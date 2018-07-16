@@ -7,7 +7,8 @@ import {
     handleDelete, 
     parseFilters, 
     updateHitsFilter ,
-    initialHits
+    initialHits,
+    refresh
 } from '../model/SearchPaneModel'
 import SideBar from './sub/SideBar'
 import StatusBar from './sub/StatusBar'
@@ -94,6 +95,7 @@ class SearchPane extends Component {
         this.parseFilters = parseFilters.bind(this)
         this.handleDelete = handleDelete.bind(this)
         this.initialHits = initialHits.bind(this)
+        this.refresh = refresh.bind(this)
     }
 
     componentWillMount() {
@@ -127,10 +129,7 @@ class SearchPane extends Component {
                                 deleteId(id, json => {
                                     setTimeout(() => {
                                         console.log(json);
-                                    
-                                        const qry = this.state.lastQry
-                                        const rank = this.state.rank
-                                        this.updateHits(qry, 0, rank)
+                                        this.refresh()
                                     }, 500)
                                     
                                 })
@@ -141,18 +140,16 @@ class SearchPane extends Component {
                         }
                     }
                 />
-                <AddWindow 
+                <AddWindow
                     show={this.state.showWindowAdd} 
                     onClose={ () => {this.setState({showWindowAdd: false})} }
+                    hardFacets={this.state.hardFacets}
                     onPost={ 
                                 (data) => {
                                     postData(data, json => {
                                         setTimeout(() => {
                                             console.log(json);
-                                        
-                                            const qry = this.state.lastQry
-                                            const rank = this.state.rank
-                                            this.updateHits(qry, 0, rank)
+                                            this.refresh()
                                         }, 500)
                                     })
                                 } 

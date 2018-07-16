@@ -1,4 +1,4 @@
-import { handleQuery } from '../model/APIModel'
+import { handleQuery, rankIn } from '../model/APIModel'
 
 const testdata = [
     {
@@ -19,18 +19,14 @@ export function handleDelete(data) {
     this.setState({showWindowDel: true, idToDelete: id, nameToDelete: name})
 }
 
-export function switchRanking(asc){
+export function switchRanking(asc, call){
     this.setState({rank: asc})
-    let qry = this.state.lastQry
-    let page = this.state.currPage
-    if(asc){
-        // console.log('ascending');
-        this.updateHits(qry, page, "+")
-    } else {
-        // console.log('descending');
-        this.updateHits(qry, page, "-")
-
-    }
+    rankIn(asc, json => {
+        console.log(json);
+        if(call){
+            this.refresh()
+        }
+    })
 }
 
 export function parseFilters(raw){
@@ -42,12 +38,13 @@ export function updateHitsFilter(filters){
     // parse filters
     const fil = this.parseFilters(filters)
     const qry = this.state.lastQry
-    const rank = this.state.rank
-    this.updateHits(qry, 0, rank, fil)
+    this.updateHits(qry, 0, fil)
 }
 
 export function initialHits(){
-    handleQuery("", 0, "-", "-")
+    // always start in desc
+    this.switchRanking(false, false)
+    handleQuery("", 0, "-")
     .then(result => {
         if(result){
             this.setState({ 
@@ -72,7 +69,7 @@ export function initialHits(){
     })
 }
 
-export function updateHits(qry, page, rank, filters){
+export function updateHits(qry, page, filters){
     if(!filters){
         filters = this.parseFilters(this.state.selectedCats)
     }
@@ -84,7 +81,7 @@ export function updateHits(qry, page, rank, filters){
         main_pane_style: "pointer-events: none; filter: blur(1.5px); overflow: hidden;"
     })
 
-    handleQuery(qry, page, rank, filters)
+    handleQuery(qry, page, filters)
     .then(result => {
         if(result){
             this.setState({ 
@@ -138,4 +135,9 @@ export function handleCategoryChange (sel, val){
 
     this.setState({selectedCats: newCategories})
     this.updateHitsFilter(newCategories)
+}
+
+export function refresh() {
+    const qry = this.state.lastQry
+    this.updateHits(qry, 0)
 }

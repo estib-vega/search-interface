@@ -1,11 +1,11 @@
-function getFromQry (qry, page, rank, filters) {
+
+function getFromQry (qry, page, filters) {
 
     qry = qry === "" ? "-" : qry
     page = !page ? "-" : page
-    rank = !rank ? "-" : "+"
     filters = !filters ? "-" : filters
 
-    const url = "/api/query/" + qry + "&" + page + "&" + rank + "&" + filters
+    const url = "/api/query/" + qry + "&" + page  + "&" + filters
     
     const response = fetch(url)
     .then(response => 
@@ -17,9 +17,9 @@ function getFromQry (qry, page, rank, filters) {
     return response
 }
 // handle the search queries
-export function handleQuery (qry, page=0, rank="-", filters="-") {
+export function handleQuery (qry, page=0, filters="-") {
     
-    return getFromQry(qry, page, rank, filters)
+    return getFromQry(qry, page, filters)
 }
 
 // post data for adding app
@@ -46,27 +46,11 @@ export async function deleteId(id, callback){
     .catch(e => console.log(e))
 }
 
-// open or close the the facet menu
-export function dropDown (data) {
-    const menu = data.menu
-
-    // arrow button
-    let arrow = document.getElementById(menu + "_arrow")
-    // menu items
-    let menuitems = document.getElementById(menu)
-
-
-    const state = arrow.getAttribute("state")
-
-    if(state === "open"){
-        arrow.style.transform = "rotate(-90deg)"
-        arrow.setAttribute("state", "closed");
-        menuitems.style.height = "0px"
-    }
-    else if(state === "closed"){
-        arrow.style.transform = "rotate(90deg)"
-        arrow.setAttribute("state", "open");
-        menuitems.style.height = "auto"
-    }
+export async function rankIn(asc, callback){
+    const rank = asc ? "asc" : "desc" 
+    const url = "/api/rank/" + rank
+    await fetch(url)
+    .then( response => response.json())
+    .then(json => callback(json))
+    .catch(e => console.log(e))
 }
-

@@ -68,3 +68,19 @@
     border: none;
     outline: none;
 }
+
+.window-input-container select{
+    font-size: 14px;
+    font-family: helvetica;
+    font-weight: lighter;
+    border-radius: 3px;   
+    border: none;
+    outline: none;
+    height: 35px;
+    margin: 2px 0;
+    background-color: white;
+}
+
+.number{
+    width: 100px;
+}
