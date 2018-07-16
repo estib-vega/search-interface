@@ -6,8 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "client": "cd client/search-frontend && npm start",
-    "server": "nodemon index.js",
-    "dev": "concurrently --kill-others-on-fail \"npm:server\" \"npm:client\""
+    "bclient": "cd client/search-frontend && npm run build",
+    "devserver": "nodemon index.js",
+    "server": "node index.js",
+    "dev": "concurrently --kill-others-on-fail \"npm:devserver\" \"npm:client\"",
+    "cdev": "concurrently --kill-others-on-fail \"npm:server\" \"npm:client\""
   },
   "repository": {
     "type": "git",

@@ -1,17 +1,39 @@
 .side-bar{
     width: 190px;
-    height: calc(100vh - 50px);
+    height: calc(100% - 50px);
     margin-left: 10px;
     opacity: 0;
 }
+
+.side-bar > button {
+    position: absolute;
+    border-radius: 24px;
+    padding: 5px 10px;
+    font-size: 16px;
+    border: none;
+    top: 35px;
+    left: 50px;
+    font-family: 'Montserrat', sans-serif;
+    color: white;
+    background: linear-gradient(to right, #22d499, #00e24b);
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+    transition: .3s;
+}
+
+.side-bar > button:hover{
+    box-shadow: 0 15px 20px rgba(0, 0, 0, 0.35);
+}
+
 .faceter{
     background-color: rgba(255, 255, 255, 0.45);
     margin-top: 100px;
     padding: 10px;
-    padding-top: 5px;
+    padding-top: 30px;
     border-radius: 3px;
-    overflow: hidden;
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.15);
+    transition: 0.3s;
+    max-height: 80%;
 }
 
 .faceter h4{
@@ -40,10 +62,18 @@
     display: flex;
     justify-content: space-between;
     border-bottom: 2px solid rgba(119, 119, 119, 0.5);
+    position: absolute;
+    width: calc(100% - 20px);
+    left: 0;
+    top:105px;
+    padding: 0 5px;
+    margin: 0 10px;
 }
 
 .facets{
-    overflow: hidden;
+    overflow-y: scroll;
+    transition: 0.3s;
+    max-height: 300px;
 }
 
 .arrow{

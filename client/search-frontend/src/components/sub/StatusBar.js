@@ -1,4 +1,6 @@
 import { linkEvent, Component } from 'inferno'
+import '../../css/StatusBar.css'
+
 
 // ascending descending switch
 const Switch = ({ switchRanking }) => {

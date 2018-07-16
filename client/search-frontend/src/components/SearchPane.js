@@ -1,23 +1,24 @@
 import { Component } from 'inferno'
-import { handleQuery } from '../model/search_model'
-import SideBar from './search/SideBar'
-import StatusBar from './search/StatusBar'
-import '../css/SideBar.css'
+import { postData, deleteId } from '../model/APIModel'
+import { 
+    updateHits, 
+    switchRanking, 
+    handleCategoryChange, 
+    handleDelete, 
+    parseFilters, 
+    updateHitsFilter ,
+    initialHits
+} from '../model/SearchPaneModel'
+import SideBar from './sub/SideBar'
+import StatusBar from './sub/StatusBar'
+import AddWindow from './sub/AddWindow'
+import DeleteWindow from './sub/DeleteWindow'
+import MainPane from './sub/MainPane'
 import '../css/SearchMainPane.css'
 import '../css/Animations.css'
-import '../css/StatusBar.css'
 const gitImg = require('../img/git.png')
-const notfound = require('../img/error.jpg')
 
-const testdata = [
-    {
-    "name": "No results",
-    "image": "https://i.pinimg.com/736x/f4/3e/63/f43e630bbce1710655b30fdac7c3c9a4--philadelphia-reflection-photography.jpg",
-    "link": "/",
-    "category": "404",
-    "rank": 1
-  }
-]
+// https://www.picgifs.com/reaction-gifs/reaction-gifs/deal-with-it/picgifs-deal-with-it-1528635.gif
 
 // search bar 
 const SearchBar = ({onTextChange}) => {
@@ -29,102 +30,8 @@ const SearchBar = ({onTextChange}) => {
 }
 
 
-
-// test hit
-const SingleHit = ({data}) => {
-    return (
-        <a href={ data.link } className="single-link">
-            <div className="single-hit">
-                <img src={ data.image || data.image === "" ? notfound : data.image } alt="img"/>
-                <div className="single-hit-text">
-                    <h2 dangerouslySetInnerHTML={{__html: data._highlightResult ? data._highlightResult.name.value : data.name}}></h2>
-                    <h3>{ data.category }</h3>
-                </div>
-            </div>
-        </a>
-    )
-}
-
-// main results pane
-class MainPane extends Component {
-    render (){
-        return (
-            <div className="main-pane fade-in-up" id="main_pane" style={ this.props.op }>
-                {
-                    this.props.hits.map((hit) => {
-                        return <SingleHit data={ hit }/>
-                    })
-                }
-            </div>
-        )
-    }
-}
-
-
-
-
 // search bar and main results pane 
 class SearchMainPane extends Component {
-    // constructor(){
-    //     super();
-    //     this.state = {
-    //         hits: [],
-    //         imageDict: {},
-    //         lastQry: "",
-    //         pages: 0,
-    //         currPage: 0,
-    //         numHits: 0,
-    //         main_pane_style: ""
-    //     }
-
-    //     this.updateHits = this.updateHits.bind(this)
-    //     this.switchRanking = this.switchRanking.bind(this)
-    // }
-
-    // switchRanking(asc){
-    //     let qry = this.state.lastQry
-    //     let page = this.state.currPage
-    //     if(asc){
-    //         // console.log('ascending');
-    //         this.updateHits(qry, page, "+")
-    //     } else {
-    //         // console.log('descending');
-    //         this.updateHits(qry, page)
-
-    //     }
-    // }
-
-    // updateHits(qry, page, rank){
-    //     // remember last query for pagination
-    //     this.setState({
-    //         lastQry: qry,
-    //         currPage: page ? page : 0,
-    //         main_pane_style: "pointer-events: none; filter: blur(1.5px);"
-    //     })
-
-    //     handleQuery(qry, page, rank)
-    //     .then(result => {
-    //         console.log(result.facet);
-            
-    //         if(result){
-    //             this.setState({ 
-    //                 hits: result.hits,
-    //                 pages: result.pages,
-    //                 numHits: result.results,
-    //                 main_pane_style: "pointer-events: all; filter: none;"
-    //             })
-    //         }
-    //     })
-    //     .catch(() => {
-    //         this.setState({
-    //             hits: testdata,
-    //             pages: 1,
-    //             numHits: 0,
-    //             main_pane_style: "pointer-events: all; filter: none;"
-    //         })
-    //     })
-    // }
-
     render () {
         return (
             <div className="search-pane-wrapper">
@@ -136,7 +43,11 @@ class SearchMainPane extends Component {
                     pages={ this.props.pages } 
                     onPagination={ (page) => { this.props.updateHits(this.props.lastQry, page) } }
                 />
-                <MainPane hits={this.props.hits} op={ this.props.main_pane_style }/>
+                <MainPane 
+                    hits={this.props.hits} 
+                    op={ this.props.main_pane_style }
+                    onDelete={this.props.onDelete}    
+                />
             </div>
         )
     }
@@ -160,66 +71,99 @@ class SearchPane extends Component {
         this.state = {
             hits: [],
             facet: [],
+            hardFacets: [], // won't change after first query
             imageDict: {},
             lastQry: "",
             pages: 0,
             currPage: 0,
             numHits: 0,
-            main_pane_style: ""
-        }
-
-        this.updateHits = this.updateHits.bind(this)
-        this.switchRanking = this.switchRanking.bind(this)
-    }
-
-    switchRanking(asc){
-        let qry = this.state.lastQry
-        let page = this.state.currPage
-        if(asc){
-            // console.log('ascending');
-            this.updateHits(qry, page, "+")
-        } else {
-            // console.log('descending');
-            this.updateHits(qry, page)
+            main_pane_style: "",
+            selectedCats: [],
+            rank: false, // desc
+            showWindowAdd: false,
+            showWindowDel: false,
+            idToDelete: "",
+            nameToDelete: "-",
 
         }
+
+        this.updateHits = updateHits.bind(this)
+        this.switchRanking = switchRanking.bind(this)
+        this.handleCategoryChange = handleCategoryChange.bind(this)
+        this.updateHitsFilter = updateHitsFilter.bind(this)
+        this.parseFilters = parseFilters.bind(this)
+        this.handleDelete = handleDelete.bind(this)
+        this.initialHits = initialHits.bind(this)
     }
 
-    updateHits(qry, page, rank){
-        // remember last query for pagination
-        this.setState({
-            lastQry: qry,
-            currPage: page ? page : 0,
-            main_pane_style: "pointer-events: none; filter: blur(1.5px);"
-        })
-
-        handleQuery(qry, page, rank)
-        .then(result => {
-            if(result){
-                this.setState({ 
-                    hits: result.hits,
-                    facet: result.facet,
-                    pages: result.pages,
-                    numHits: result.results,
-                    main_pane_style: "pointer-events: all; filter: none;"
-                })
-            }
-        })
-        .catch(() => {
-            this.setState({
-                hits: testdata,
-                facet: [],
-                pages: 1,
-                numHits: 0,
-                main_pane_style: "pointer-events: all; filter: none;"
-            })
-        })
+    componentWillMount() {
+        this.initialHits()
     }
+
 
     render () {
         return (
             <div className="main-container" id="main_container">
-                <SideBar facets={this.state.facet}/>
+                <DeleteWindow 
+                    appName={this.state.nameToDelete}
+                    show={this.state.showWindowDel}
+                    onCancel={
+                        () => {
+                            // set the id and name
+                            // to delete to empty string
+                            // and close window
+                            this.setState({
+                                nameToDelete: "", 
+                                idToDelete: "", 
+                                showWindowDel: false
+                            })
+                        }
+                    }
+                    onAccept={
+                        () => {
+                            // delete the stored id
+                            const id = this.state.idToDelete
+                            if(id !== ""){
+                                deleteId(id, json => {
+                                    setTimeout(() => {
+                                        console.log(json);
+                                    
+                                        const qry = this.state.lastQry
+                                        const rank = this.state.rank
+                                        this.updateHits(qry, 0, rank)
+                                    }, 500)
+                                    
+                                })
+                                
+                            }
+                            // close window
+                            this.setState({showWindowDel: false})                            
+                        }
+                    }
+                />
+                <AddWindow 
+                    show={this.state.showWindowAdd} 
+                    onClose={ () => {this.setState({showWindowAdd: false})} }
+                    onPost={ 
+                                (data) => {
+                                    postData(data, json => {
+                                        setTimeout(() => {
+                                            console.log(json);
+                                        
+                                            const qry = this.state.lastQry
+                                            const rank = this.state.rank
+                                            this.updateHits(qry, 0, rank)
+                                        }, 500)
+                                    })
+                                } 
+                            }
+                />
+                <SideBar 
+                    facets={this.state.facet} 
+                    hardFacets={this.state.hardFacets}
+                    onChangedCategory={this.handleCategoryChange}
+                    onAdd={ () => {this.setState({showWindowAdd: true})} }
+                />
                 <SearchMainPane
                     hits={this.state.hits}
                     imageDict={this.state.imageDict}
@@ -230,6 +174,7 @@ class SearchPane extends Component {
                     main_pane_style={this.state.main_pane_style}
                     updateHits={this.updateHits}
                     switchRanking={this.switchRanking}
+                    onDelete={this.handleDelete}
                 />
                 <Footer/>
             </div>

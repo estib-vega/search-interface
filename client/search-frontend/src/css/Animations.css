@@ -16,6 +16,11 @@
 .fade-in-down{
     animation: 0.5s fade-in-down forwards cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.3s;
 }
+.fade-in-up-window{
+    animation: 0.5s fade-in-up forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: all;
+}
+
 .scroll-up{
     animation: 0.5s scroll-up forwards ease-in-out;   
 }

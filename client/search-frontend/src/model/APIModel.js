@@ -1,9 +1,11 @@
-function getFromQry (qry, page, rank) {
+function getFromQry (qry, page, rank, filters) {
 
     qry = qry === "" ? "-" : qry
     page = !page ? "-" : page
     rank = !rank ? "-" : "+"
-    const url = "/api/query/" + qry + "&" + page + "&" + rank
+    filters = !filters ? "-" : filters
+
+    const url = "/api/query/" + qry + "&" + page + "&" + rank + "&" + filters
     
     const response = fetch(url)
     .then(response => 
@@ -12,22 +14,36 @@ function getFromQry (qry, page, rank) {
     ).catch(() => {
         return []
     })
-
-
     return response
 }
 // handle the search queries
-export function handleQuery (qry, page, rank) {
+export function handleQuery (qry, page=0, rank="-", filters="-") {
     
-    return getFromQry(qry, page, rank)
+    return getFromQry(qry, page, rank, filters)
 }
 
-// get the face info
-export const getFacets = () => {
-    const facetUrl = "/api/facet"
+// post data for adding app
+export async function postData(data, callback){
+    const url = "/api/1/apps"
+    await fetch(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {"Content-Type": "application/json"}
+    })
+    .then( response => response.json())
+    .then(json => callback(json))
+    .catch(e => console.log(e))
+}
 
-    return fetch(facetUrl)
-    .then((response) => response.json())
+// delete app, given an id
+export async function deleteId(id, callback){
+    const url = "/api/1/apps/" + id
+    await fetch(url, {
+        method: "DELETE",
+    })
+    .then( response => response.json())
+    .then(json => callback(json))
+    .catch(e => console.log(e))
 }
 
 // open or close the the facet menu

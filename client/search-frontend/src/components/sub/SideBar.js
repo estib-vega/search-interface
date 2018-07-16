@@ -1,17 +1,6 @@
 import { linkEvent, Component } from 'inferno'
-import { dropDown, getFacets } from '../../model/search_model'
-
-
-// single category
-// const SingleCategory = ({value, count, selected, onSelect}) => {
-//     return (
-//         <div className={ selected ? "single-category selected" : "single-category" } 
-//         onClick={ (e) => {onSelect(e.target)} }>
-//             <h4>{value}</h4>
-//             <h4>{count}</h4>
-//         </div>
-//     )
-// }
+import { dropDown } from '../../model/APIModel'
+import '../../css/SideBar.css'
 
 class SingleCategory extends Component {
     constructor(props){
@@ -20,8 +9,6 @@ class SingleCategory extends Component {
         this.state = {
             se: this.props.selected,
         }
-        console.log(this.props.selected);
-        
     }
 
     render() {
@@ -37,34 +24,24 @@ class SingleCategory extends Component {
 
 // category facets
 class Categories extends Component {
-    constructor(){
-        super()
-        // this.state = {
-        //     facets: []
-        // }
-
+    constructor(props){
+        super(props)
         this.selectCategory = this.selectCategory.bind(this)
     }
 
-    componentDidMount(){
-        // // get the counts
-        // getFacets()
-        // .then((json) => {
-        //     this.setState({
-        //         facets: json.facet
-        //     })
-        // })
-        // .catch(() => {
-        //     console.warn('- Unable to retrieve facets');
-        // })
+    selectCategory(category) {
+        // display the selected category
+        // --> toggled
+        const newSelectedState = !category.state.se
+        category.setState({
+            se: newSelectedState
+        })
+
+        const val = category.props.value
+        this.props.onChangedCategory(newSelectedState, val)
     }
 
-    selectCategory(category) {
-        const lastSelectedState = category.state.se
-        category.setState({
-            se: !lastSelectedState
-        })
-    }
+  
 
     render(){
         return (
@@ -75,8 +52,11 @@ class Categories extends Component {
             </div>
             <div className="facets" id="facets_0">
                 {
-                    this.props.facets.map((facet) => {
-                        return <SingleCategory value={facet.name} count={facet.count} onSelect={this.selectCategory}/>
+                    this.props.hardFacets.map((facet) => {
+                        const facetObj = this.props.facets.filter(val => val.name === facet.name)
+                        const count = facetObj && facetObj.length === 1 ? facetObj[0].count : 0
+
+                        return <SingleCategory value={facet.name} count={count} onSelect={this.selectCategory}/>
                     })
                 }
             </div>
@@ -90,7 +70,8 @@ class SideBar extends Component {
     render() {
         return (
             <div className="side-bar fade-in-right" id="side_bar">
-                <Categories facets={this.props.facets}/>
+                <button onClick={this.props.onAdd}>Add App</button>
+                <Categories facets={this.props.facets} hardFacets={this.props.hardFacets}onChangedCategory={this.props.onChangedCategory}/>
             </div>
         )
     }
