@@ -10,7 +10,9 @@ class AddWindow extends Component {
         }
         this.parseData = this.parseData.bind(this)
         this.checkValues = this.checkValues.bind(this)
+        this.close = this.close.bind(this)
     }
+
     checkValues(){
         // get all the data and store it in an object
         const appName = document.getElementById('app_name').value
@@ -27,15 +29,23 @@ class AddWindow extends Component {
         }
     }
 
+    close(){
+        document.getElementById('app_name').value = ""
+        document.getElementById('app_image').value = ""
+        document.getElementById('app_link').value = ""
+        document.getElementById('app_categ').value = "Books"
+        document.getElementById('app_rank').value = ""
+        this.props.onClose()
+    }
 
 
     parseData() {
         // get all the data and store it in an object
-        const appName = document.getElementById('app_name').value
-        const appImg = document.getElementById('app_image').value
-        const appLink = document.getElementById('app_link').value
-        const appCat = document.getElementById('app_categ').value
-        const appRank = document.getElementById('app_rank').value
+        let appName = document.getElementById('app_name').value
+        let appImg = document.getElementById('app_image').value
+        let appLink = document.getElementById('app_link').value
+        let appCat = document.getElementById('app_categ').value
+        let appRank = document.getElementById('app_rank').value
 
         const data = {
             name: appName,
@@ -46,16 +56,16 @@ class AddWindow extends Component {
         }
         
 
+
         this.props.onPost(data)
-        // should display a message
-        this.props.onClose()
+        this.close()
         this.setState({canAdd: false})
     }
 
     render() {
         return (
             <div className={this.props.show ? "window-container fade-in-up-window" : "window-container"}>
-                <h3 onClick={this.props.onClose}>CLOSE</h3>
+                <h3 onClick={this.close}>CLOSE</h3>
                 <h2> Please fill the information about the App </h2>
                 <div className="window-input-container">
                     <input type="text" name="app_name" id="app_name" placeholder="Name" onKeyUp={this.checkValues}/>

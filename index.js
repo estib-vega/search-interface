@@ -3,6 +3,9 @@ const app = express()
 const bodyparser = require('body-parser') // post
 const AlgoliaModel = require('./model/algolia-model')
 
+// setting port
+app.set('port', (process.env.PORT || 8080))
+
 // decode post form
 // it returns the information as json
 app.use(bodyparser.urlencoded({
@@ -14,7 +17,7 @@ app.use(bodyparser.json())
 const algolia = new AlgoliaModel()
 
 // serve built inferno files
-app.use(express.static('./client/search-frontend/build'))
+app.use(express.static(__dirname + '/public'))
 
 // get from algolia api
 app.get("/api/query/:qry&:page&:filters", (req, res) => {
@@ -58,6 +61,6 @@ app.delete("/api/1/apps/:id", (req, res) => {
     })
 })
 
-app.listen(8080, () => {
+app.listen(app.get('port'), () => {
     console.log('listening in port 8080');
 })

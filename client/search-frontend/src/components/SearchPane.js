@@ -96,10 +96,44 @@ class SearchPane extends Component {
         this.handleDelete = handleDelete.bind(this)
         this.initialHits = initialHits.bind(this)
         this.refresh = refresh.bind(this)
+        this.acceptDelete = this.acceptDelete.bind(this)
+        this.onPostingData = this.onPostingData.bind(this)
     }
 
     componentWillMount() {
         this.initialHits()
+    }
+
+    acceptDelete(){
+        // close window
+        // blur the results
+        this.setState({showWindowDel: false, main_pane_style: "pointer-events: none; filter: blur(1.5px); overflow: hidden;"})  
+
+        // delete the stored id
+        const id = this.state.idToDelete
+        if(id !== ""){
+            deleteId(id, json => {
+                setTimeout(() => {
+                    console.log(json);
+                    this.refresh()
+                    this.setState({main_pane_style: "pointer-events: all; filter: none;"})
+                }, 1500)
+                
+            })
+            
+        }
+    }
+
+    onPostingData(data){
+        // blur the results
+        this.setState({main_pane_style: "pointer-events: none; filter: blur(1.5px); overflow: hidden;"})  
+        postData(data, json => {
+            setTimeout(() => {
+                console.log(json);
+                this.refresh()
+                this.setState({main_pane_style: "pointer-events: all; filter: none;"})
+            }, 1500)
+        })
     }
 
 
@@ -121,39 +155,13 @@ class SearchPane extends Component {
                             })
                         }
                     }
-                    onAccept={
-                        () => {
-                            // delete the stored id
-                            const id = this.state.idToDelete
-                            if(id !== ""){
-                                deleteId(id, json => {
-                                    setTimeout(() => {
-                                        console.log(json);
-                                        this.refresh()
-                                    }, 500)
-                                    
-                                })
-                                
-                            }
-                            // close window
-                            this.setState({showWindowDel: false})                            
-                        }
-                    }
+                    onAccept={ this.acceptDelete }
                 />
                 <AddWindow
                     show={this.state.showWindowAdd} 
                     onClose={ () => {this.setState({showWindowAdd: false})} }
                     hardFacets={this.state.hardFacets}
-                    onPost={ 
-                                (data) => {
-                                    postData(data, json => {
-                                        setTimeout(() => {
-                                            console.log(json);
-                                            this.refresh()
-                                        }, 500)
-                                    })
-                                } 
-                            }
+                    onPost={ (data) => {this.onPostingData(data)} }
                 />
                 <SideBar 
                     facets={this.state.facet} 

@@ -7,10 +7,13 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "client": "cd client/search-frontend && npm start",
     "bclient": "cd client/search-frontend && npm run build",
+    "clean": "rm -rf ./public",
+    "build": "npm run clean && npm run bclient && mkdir public && cp -r ./client/search-frontend/build/. ./public",
     "devserver": "nodemon index.js",
     "server": "node index.js",
     "dev": "concurrently --kill-others-on-fail \"npm:devserver\" \"npm:client\"",
-    "cdev": "concurrently --kill-others-on-fail \"npm:server\" \"npm:client\""
+    "cdev": "concurrently --kill-others-on-fail \"npm:server\" \"npm:client\"",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",

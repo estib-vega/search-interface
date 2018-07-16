@@ -22,7 +22,6 @@ export function handleDelete(data) {
 export function switchRanking(asc, call){
     this.setState({rank: asc})
     rankIn(asc, json => {
-        console.log(json);
         if(call){
             this.refresh()
         }
@@ -137,7 +136,28 @@ export function handleCategoryChange (sel, val){
     this.updateHitsFilter(newCategories)
 }
 
-export function refresh() {
+export async function refresh() {
     const qry = this.state.lastQry
-    this.updateHits(qry, 0)
+    const filters = this.parseFilters(this.state.selectedCats)
+    // this.updateHits(qry, 0)
+
+    const result = await handleQuery(qry, 0, filters)
+    
+    if(result){
+        this.setState({ 
+            hits: result.hits,
+            facet: result.facet,
+            pages: result.pages,
+            numHits: result.results,
+        })
+    }
+    else{
+        this.setState({
+            hits: testdata,
+            facet: [],
+            pages: 1,
+            numHits: 0,
+        })
+    }
+
 }
