@@ -4,7 +4,7 @@ The backend was developed using Node js and the frontend was developed using Inf
 
 
 To see the end application please see the link of the deployed page on heroku:
-https://rocky-lowlands-55287.herokuapp.com/
+https://app-search-algolia.herokuapp.com
 
 
 # Helpful NPM Scripts
