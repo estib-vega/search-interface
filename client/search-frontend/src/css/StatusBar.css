@@ -110,3 +110,35 @@ input:checked + .slider:before {
     font-size: 14px;
     opacity: .55;
 }
+
+@media only screen and (max-width: 730px) {
+
+    .status-button-container h3 {
+        font-size: 14px;
+    }
+    .status-button-container {
+        justify-content: space-around;
+    }
+    .status-button-container button {
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        padding-bottom: 3px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-sizing: border-box;
+
+    }
+    .switch{
+        margin: 0 5px;
+    }
+    .complete-switch h3 {
+        font-size: 14px;
+    }
+    .total-hits-container h3{
+        font-size: 11px;
+        text-align: center;
+        padding: 10px;
+    }
+}

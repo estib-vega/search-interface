@@ -84,3 +84,29 @@
 .number{
     width: 100px;
 }
+
+@media only screen and (max-width: 730px) {
+    .window-container{
+        width: 100vw;
+        height: 100vh;
+        left: 0;
+        top: 0;
+    }
+
+    .window-container h3{
+        opacity: 1;
+        font-size: 16px;
+        color: white;
+    }
+    
+    .window-container h2{
+        margin-top: 50px;
+    }
+
+    .window-input-container input[type="text"]{
+        margin: 5px 0;
+    }
+    .window-input-container select{
+        margin: 5px 0;
+    }
+}

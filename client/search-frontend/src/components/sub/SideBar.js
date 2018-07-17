@@ -54,6 +54,7 @@ class Categories extends Component {
     render(){
         return (
             <div className="faceter" style={this.state.arrowState ? "" : "height: 0px;"}>
+                <h1 className="close-menu" onClick={this.props.onClose}>x</h1>
                 <div className="faceter-header">
                     <h4>CATEGORY</h4>
                     <h4 
@@ -81,9 +82,14 @@ class Categories extends Component {
 class SideBar extends Component {
     render() {
         return (
-            <div className="side-bar fade-in-right" id="side_bar">
+            <div className="side-bar fade-in-right" id="side_bar" style={this.props.menu ? "left:0;" : ""}>
                 <button onClick={this.props.onAdd}>Add App</button>
-                <Categories facets={this.props.facets} hardFacets={this.props.hardFacets}onChangedCategory={this.props.onChangedCategory}/>
+                <Categories 
+                    facets={this.props.facets} 
+                    hardFacets={this.props.hardFacets}
+                    onChangedCategory={this.props.onChangedCategory}
+                    onClose={this.props.onClose}
+                />
             </div>
         )
     }

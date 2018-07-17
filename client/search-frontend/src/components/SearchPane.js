@@ -83,6 +83,7 @@ class SearchPane extends Component {
             rank: false, // desc
             showWindowAdd: false,
             showWindowDel: false,
+            showMenu: false,
             idToDelete: "",
             nameToDelete: "-",
 
@@ -98,10 +99,19 @@ class SearchPane extends Component {
         this.refresh = refresh.bind(this)
         this.acceptDelete = this.acceptDelete.bind(this)
         this.onPostingData = this.onPostingData.bind(this)
+        this.updateWidth = this.updateWidth.bind(this)
+    }
+
+    updateWidth(){
+        const w = window.innerWidth
+        if(w > 730){
+            this.setState({showMenu: false})
+        }
     }
 
     componentWillMount() {
         this.initialHits()
+        window.addEventListener('resize', this.updateWidth)
     }
 
     acceptDelete(){
@@ -140,6 +150,10 @@ class SearchPane extends Component {
     render () {
         return (
             <div className="main-container" id="main_container">
+                <div className="menu">
+                    <button className="menu-button" onClick={() => {this.setState({showMenu: true})}}>CATEGORIES</button>
+                    <button className="menu-add-button" onClick={() => {this.setState({showWindowAdd: true})}}>Add App</button>
+                </div>
                 <DeleteWindow 
                     appName={this.state.nameToDelete}
                     show={this.state.showWindowDel}
@@ -168,6 +182,8 @@ class SearchPane extends Component {
                     hardFacets={this.state.hardFacets}
                     onChangedCategory={this.handleCategoryChange}
                     onAdd={ () => {this.setState({showWindowAdd: true})} }
+                    menu={this.state.showMenu}
+                    onClose={() => {this.setState({showMenu: false})}}
                 />
                 <SearchMainPane
                     hits={this.state.hits}
